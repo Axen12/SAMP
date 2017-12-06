@@ -1,0 +1,89 @@
+#include <YSI\y_ini.inc>
+#define DIALOG_REGISTER 1
+#define DIALOG_LOGIN 2
+#define PATH "/Nalozi/%s.ini"
+#pragma tabsize 0
+enum pInfo
+{
+	pPass,
+	pCash
+}
+new PlayerInfo[MAX_PLAYERS][pInfo];
+forward LoadUser_data(playerid,name[],value[]);
+public LoadUser_data(playerid,name[].value[])
+{
+	INI_Int("Password",PlayerInfo[playerid][pPass]); // Sacuva lozinku
+	INI_Int("Cash",PlayerInfo[playerid][pCash]); // Sazuva pare
+	return 1;
+}
+stock UserPath(playerid)
+{
+	new string[128],playername[MAX_PLAYER_NAME]; // Definise ili pravi ime igraca(koristi ime igraca)
+	GetPlayerName(playerid,playername,sizeof(playername)); // Ovaj kod uzima to jest dobija ime igraca
+	format(string,sizeof(string),PATH,playername); // Format za ime!
+	return string;
+}
+stock udb_hash(buf[])
+{
+    new length=strlen(buf);
+    new s1 = 1;
+    new s2 = 0;
+    new n;
+    for (n=0; n<length; n++)
+    {
+       s1 = (s1 + buf[n]) % 65521;
+       s2 = (s2 + s1)     % 65521;
+    }
+    return (s2 << 16) + s1;
+}
+public OnPlayerConnect(playerid)
+{
+	if(fexist(UserPath(playerid))
+	{
+		INI_ParseFile(UserPath(playerid),"LoadUser_%s",.bExtra = true,.extra = playerid);
+		ShowPlayerDialog(playerid,DIALOG_LOGIN,DIALOG_STYLE_INPUT,"Login:","Upisite vasu lozinku","Login","Izadji");
+	else
+	{
+		ShowPlayerDialog(playerid,DIALOG_REGISTER,DIALOG_STYLE_INPUT,"Registracija:","Upisite vasu lozinku","Register                ","Izadji");
+	}
+	return 1;
+}
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	switch(dialogid)
+	{
+		case DIALOG_REGISTER:
+		{
+		    if(!response) return Kick(playerid);
+		    if(response)
+		    {
+		        if(!strlen(inputtext)) return ShowPlayerDialog(playerid,DIALOG_REGISTER,DIALOG_STYLE_INPUT,"Registrac                        ija","Lozinka uspesna!","Registracija","Izadji");
+				new INI:File = INI_Open(UserPath(playerid));
+				INI_SetTag(File,"data");
+				INI_WriteInt(File,"Password",udb_hash(inputtext));
+				INI_WriteInt(File,"Cash",0);
+				INI_Close(File);
+				return 1;
+			}
+		}
+		case DIALOG_LOGIN:
+		{
+			if(!response) return Kick(playerid);
+			if(response)
+			{
+			    if(udb_hash(inputtext) == PlayerInfo[playerid][pPass])
+			    {
+			        INI_ParseFile(UserPath(playerid),"LoadUser_%s",.bExtra = true,.extra = playerid);
+		                GivePlayerMoney(playerid,PlayerInfo[playerid][pCash]);
+			        SendClientMessage(playerid, -1, "Uspesno si se logovao!");
+			    }
+		            else  
+		            {
+	                    ShowPlayerDialog(playerid,DIALOG_LOGIN,DIALOG_STYLE_INPUT,"Logovanje:","Lozinka nije tacna probaj                            opet!","Login","Izadji");
+		            }
+
+                        }
+                }
+   } 
+   return 1;
+}
