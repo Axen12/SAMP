@@ -1,0 +1,12 @@
+public OnPlayerConnect(playerid)
+{
+	if(fexist(UserPath(playerid))
+	{
+		INI_ParseFile(UserPath(playerid),"LoadUser_%s",.bExtra = true,.extra = playerid);
+		ShowPlayerDialog(playerid,DIALOG_LOGIN,DIALOG_STYLE_INPUT,"Login:","Upisite vasu lozinku","Login","Izadji");
+	else
+	{
+		ShowPlayerDialog(playerid,DIALOG_REGISTER,DIALOG_STYLE_INPUT,"Registracija:","Upisite vasu lozinku","Register                ","Izadji");
+	}
+	return 1;
+}
