@@ -1,0 +1,39 @@
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	switch(dialogid)
+	{
+		case DIALOG_REGISTER:
+		{
+		    if(!response) return Kick(playerid);
+		    if(response)
+		    {
+		        if(!strlen(inputtext)) return ShowPlayerDialog(playerid,DIALOG_REGISTER,DIALOG_STYLE_INPUT,"Registrac                        ija","Lozinka uspesna!","Registracija","Izadji");
+				new INI:File = INI_Open(UserPath(playerid));
+				INI_SetTag(File,"data");
+				INI_WriteInt(File,"Password",udb_hash(inputtext));
+				INI_WriteInt(File,"Cash",0);
+				INI_Close(File);
+				return 1;
+			}
+		}
+		case DIALOG_LOGIN:
+		{
+			if(!response) return Kick(playerid);
+			if(response)
+			{
+			    if(udb_hash(inputtext) == PlayerInfo[playerid][pPass])
+			    {
+			        INI_ParseFile(UserPath(playerid),"LoadUser_%s",.bExtra = true,.extra = playerid);
+		                GivePlayerMoney(playerid,PlayerInfo[playerid][pCash]);
+			        SendClientMessage(playerid, -1, "Uspesno si se logovao!");
+			    }
+		            else  
+		            {
+	                    ShowPlayerDialog(playerid,DIALOG_LOGIN,DIALOG_STYLE_INPUT,"Logovanje:","Lozinka nije tacna probaj                            opet!","Login","Izadji");
+		            }
+
+                        }
+                }
+   } 
+   return 1;
+}
