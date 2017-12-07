@@ -1,0 +1,7 @@
+stock UserPath(playerid)
+{
+	new string[128],playername[MAX_PLAYER_NAME];
+	GetPlayerName(playerid,playername,sizeof(playername));
+	format(string,sizeof(string),PATH,playername);
+	return string;
+}
