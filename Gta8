@@ -1,0 +1,6 @@
+public LoadUser_data(playerid,name[].value[])
+{
+	INI_Int("Password",PlayerInfo[playerid][pPass]);
+	INI_Int("Cash",PlayerInfo[playerid][pCash]);
+	return 1;
+}
